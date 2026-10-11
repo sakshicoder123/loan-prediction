@@ -1,0 +1,193 @@
+{
+  "best_model_name": "Stacking Ensemble",
+  "dataset_rows": 614,
+  "models_benchmarked": {
+    "Logistic Regression": {
+      "accuracy": 0.8618,
+      "precision": 0.84,
+      "recall": 0.9882,
+      "f1_score": 0.9081,
+      "roc_auc": 0.8768,
+      "confusion_matrix": [
+        [
+          22,
+          16
+        ],
+        [
+          1,
+          84
+        ]
+      ],
+      "cv_accuracy_mean": 0.7902,
+      "cv_accuracy_std": 0.0246,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "Decision Tree": {
+      "accuracy": 0.7967,
+      "precision": 0.8061,
+      "recall": 0.9294,
+      "f1_score": 0.8634,
+      "roc_auc": 0.8186,
+      "confusion_matrix": [
+        [
+          19,
+          19
+        ],
+        [
+          6,
+          79
+        ]
+      ],
+      "cv_accuracy_mean": 0.78,
+      "cv_accuracy_std": 0.0213,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "Random Forest": {
+      "accuracy": 0.8699,
+      "precision": 0.8557,
+      "recall": 0.9765,
+      "f1_score": 0.9121,
+      "roc_auc": 0.8706,
+      "confusion_matrix": [
+        [
+          24,
+          14
+        ],
+        [
+          2,
+          83
+        ]
+      ],
+      "cv_accuracy_mean": 0.7882,
+      "cv_accuracy_std": 0.0163,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "Gradient Boosting": {
+      "accuracy": 0.8455,
+      "precision": 0.8438,
+      "recall": 0.9529,
+      "f1_score": 0.895,
+      "roc_auc": 0.8554,
+      "confusion_matrix": [
+        [
+          23,
+          15
+        ],
+        [
+          4,
+          81
+        ]
+      ],
+      "cv_accuracy_mean": 0.778,
+      "cv_accuracy_std": 0.0222,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "Support Vector Machine": {
+      "accuracy": 0.8455,
+      "precision": 0.8235,
+      "recall": 0.9882,
+      "f1_score": 0.8984,
+      "roc_auc": 0.8251,
+      "confusion_matrix": [
+        [
+          20,
+          18
+        ],
+        [
+          1,
+          84
+        ]
+      ],
+      "cv_accuracy_mean": 0.7984,
+      "cv_accuracy_std": 0.0119,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "K-Nearest Neighbors": {
+      "accuracy": 0.7642,
+      "precision": 0.7692,
+      "recall": 0.9412,
+      "f1_score": 0.8466,
+      "roc_auc": 0.7983,
+      "confusion_matrix": [
+        [
+          14,
+          24
+        ],
+        [
+          5,
+          80
+        ]
+      ],
+      "cv_accuracy_mean": 0.7292,
+      "cv_accuracy_std": 0.0273,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "Stacking Ensemble": {
+      "accuracy": 0.8699,
+      "precision": 0.8485,
+      "recall": 0.9882,
+      "f1_score": 0.913,
+      "roc_auc": 0.8802,
+      "confusion_matrix": [
+        [
+          23,
+          15
+        ],
+        [
+          1,
+          84
+        ]
+      ],
+      "cv_accuracy_mean": 0.7882,
+      "cv_accuracy_std": 0.015,
+      "type": "Scikit-Learn (Classical ML)"
+    },
+    "TensorFlow Linear Classifier": {
+      "accuracy": 0.8618,
+      "precision": 0.84,
+      "recall": 0.9882,
+      "f1_score": 0.9081,
+      "roc_auc": 0.8554,
+      "confusion_matrix": [
+        [
+          22,
+          16
+        ],
+        [
+          1,
+          84
+        ]
+      ],
+      "cv_accuracy_mean": 0.8618,
+      "cv_accuracy_std": 0.0,
+      "type": "TensorFlow (Linear / Logistic Regressor)"
+    }
+  },
+  "features": [
+    "ApplicantIncome",
+    "CoapplicantIncome",
+    "LoanAmount",
+    "Loan_Amount_Term",
+    "TotalIncome",
+    "EMI",
+    "Debt_to_Income_Ratio",
+    "Income_to_Loan_Ratio",
+    "Gender_Female",
+    "Gender_Male",
+    "Married_No",
+    "Married_Yes",
+    "Dependents_0",
+    "Dependents_1",
+    "Dependents_2",
+    "Dependents_3",
+    "Education_Graduate",
+    "Education_Not Graduate",
+    "Self_Employed_No",
+    "Self_Employed_Yes",
+    "Credit_History_0",
+    "Credit_History_1",
+    "Property_Area_Rural",
+    "Property_Area_Semiurban",
+    "Property_Area_Urban"
+  ]
+}

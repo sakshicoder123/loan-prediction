@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Loan Prediction and Risk Assessment System utilizing Scikit-Learn Classical ML and TensorFlow Linear Models.">
+    <title>LoanPulse AI — Intelligent Loan Prediction System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">LoanPulse <span class="highlight">AI</span></span>
+                    <span class="brand-badge">Classical ML Engine</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <button id="btn-metrics-modal" class="btn-ghost" title="View Model Benchmark Analytics">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 20V10M12 20V4M6 20v-6"/>
+                    </svg>
+                    <span>Benchmarks</span>
+                </button>
+                <button id="btn-theme-toggle" class="btn-icon" aria-label="Toggle Color Theme" title="Toggle Light/Dark Theme">
+                    <svg id="icon-theme" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-wrapper">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                <span>Production Machine Learning Pipeline • No Deep Learning</span>
+            </div>
+            <h1 class="hero-title">Intelligent Loan Eligibility & Risk Evaluation</h1>
+            <p class="hero-subtitle">
+                High-precision credit decision engine powered by <strong>Scikit-Learn Stacking Ensemble</strong> and a lightweight <strong>TensorFlow Linear Classifier</strong> with instant financial explainability.
+            </p>
+
+            <!-- Sample Applicant Presets -->
+            <div class="presets-bar">
+                <span class="presets-label">Quick Test Profiles:</span>
+                <div class="preset-pills" id="preset-buttons">
+                    <button class="pill-btn active" data-preset="prime">⭐ Prime Applicant (Low Risk)</button>
+                    <button class="pill-btn" data-preset="starter">💼 First-Time Buyer (Moderate)</button>
+                    <button class="pill-btn" data-preset="overleveraged">⚠️ High Debt Burden (High Risk)</button>
+                    <button class="pill-btn" data-preset="adverse_credit">❌ Adverse Credit (Rejected)</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Application Grid Layout -->
+        <div class="dashboard-grid">
+            <!-- Left Card: Applicant Form -->
+            <div class="card form-card">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="card-title">Applicant Financial Profile</h2>
+                        <p class="card-desc">Enter demographic and financial figures to evaluate loan acceptance</p>
+                    </div>
+                </div>
+
+                <form id="loan-form" class="form-body">
+                    <!-- Engine Selection -->
+                    <div class="form-section">
+                        <label class="section-label">Prediction Engine</label>
+                        <div class="engine-switch">
+                            <label class="switch-option">
+                                <input type="radio" name="engine" value="best" checked id="engine-best">
+                                <span class="switch-label">
+                                    <strong>Scikit-Learn Ensemble</strong>
+                                    <small>Stacking (RF + GB + LR)</small>
+                                </span>
+                            </label>
+                            <label class="switch-option">
+                                <input type="radio" name="engine" value="tensorflow" id="engine-tf">
+                                <span class="switch-label">
+                                    <strong>TensorFlow Linear</strong>
+                                    <small>Single-Layer Perceptron (No DL)</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Financial Metrics -->
+                    <div class="form-section">
+                        <label class="section-label">Income & Borrowing Details</label>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="applicant_income">Applicant Monthly Income ($)</label>
+                                <div class="input-with-prefix">
+                                    <span class="prefix">$</span>
+                                    <input type="number" id="applicant_income" name="applicant_income" min="0" max="100000" value="6500" required>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="coapplicant_income">Co-Applicant Monthly Income ($)</label>
+                                <div class="input-with-prefix">
+                                    <span class="prefix">$</span>
+                                    <input type="number" id="coapplicant_income" name="coapplicant_income" min="0" max="100000" value="2500" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="loan_amount">Requested Loan Amount ($ Thousands)</label>
+                                <div class="input-with-suffix">
+                                    <input type="number" id="loan_amount" name="loan_amount" min="1" max="1000" value="140" required>
+                                    <span class="suffix">K USD ($140,000)</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="loan_term">Repayment Term (Months)</label>
+                                <select id="loan_term" name="loan_term">
+                                    <option value="360" selected>360 Months (30 Years)</option>
+                                    <option value="240">240 Months (20 Years)</option>
+                                    <option value="180">180 Months (15 Years)</option>
+                                    <option value="120">120 Months (10 Years)</option>
+                                    <option value="84">84 Months (7 Years)</option>
+                                    <option value="60">60 Months (5 Years)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit & Demographics -->
+                    <div class="form-section">
+                        <label class="section-label">Credit Record & Demographics</label>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="credit_history">Credit Guidelines History</label>
+                                <select id="credit_history" name="credit_history">
+                                    <option value="1" selected>✅ Meets Credit Guidelines (Good)</option>
+                                    <option value="0">❌ Below Credit Guidelines (Adverse/Bad)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="property_area">Property Location Area</label>
+                                <select id="property_area" name="property_area">
+                                    <option value="Semiurban" selected>Semiurban (Suburban)</option>
+                                    <option value="Urban">Urban (City Center)</option>
+                                    <option value="Rural">Rural</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row form-row-4">
+                            <div class="input-group">
+                                <label for="education">Education</label>
+                                <select id="education" name="education">
+                                    <option value="Graduate" selected>Graduate</option>
+                                    <option value="Not Graduate">Not Graduate</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="married">Married</label>
+                                <select id="married" name="married">
+                                    <option value="Yes" selected>Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="dependents">Dependents</label>
+                                <select id="dependents" name="dependents">
+                                    <option value="0">0</option>
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3+</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="self_employed">Self Employed</label>
+                                <select id="self_employed" name="self_employed">
+                                    <option value="No" selected>No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                        <span>Evaluate Application</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Card: Live Prediction & Risk Intelligence -->
+            <div class="card result-card">
+                <div class="card-header">
+                    <div class="header-icon result-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="card-title">Decision Intelligence</h2>
+                        <p class="card-desc">Real-time risk scoring and factor attribution</p>
+                    </div>
+                </div>
+
+                <div class="result-body">
+                    <!-- Gauge and Verdict -->
+                    <div class="verdict-container">
+                        <div class="gauge-wrapper">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                                <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="50" stroke-dasharray="314.15" stroke-dashoffset="50"></circle>
+                            </svg>
+                            <div class="gauge-content">
+                                <span class="gauge-number" id="prob-value">83%</span>
+                                <span class="gauge-label">Approval Chance</span>
+                            </div>
+                        </div>
+
+                        <div class="verdict-badge-box">
+                            <div class="status-chip chip-approved" id="status-chip">
+                                <span class="chip-dot"></span>
+                                <span id="status-text">LOAN APPROVED</span>
+                            </div>
+                            <div class="risk-chip" id="risk-chip">
+                                <span>Risk Tier: <strong id="risk-text">Low Risk</strong></span>
+                            </div>
+                            <div class="model-tag" id="model-tag">
+                                Model: Stacking Ensemble (Scikit-Learn)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Summary Metrics -->
+                    <div class="metric-tiles">
+                        <div class="tile">
+                            <span class="tile-label">Total Income</span>
+                            <span class="tile-val" id="summary-income">$9,000 / mo</span>
+                        </div>
+                        <div class="tile">
+                            <span class="tile-label">Est. Monthly EMI</span>
+                            <span class="tile-val" id="summary-emi">$388.89 / mo</span>
+                        </div>
+                        <div class="tile">
+                            <span class="tile-label">Debt-to-Income</span>
+                            <span class="tile-val" id="summary-dti">4.3%</span>
+                        </div>
+                        <div class="tile">
+                            <span class="tile-label">Loan Requested</span>
+                            <span class="tile-val" id="summary-loan">$140,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Factor Attribution -->
+                    <div class="factors-section">
+                        <h3 class="factors-title">Decision Factor Analysis</h3>
+                        <div class="factors-list" id="factors-list">
+                            <!-- Populated dynamically -->
+                            <div class="factor-item positive">
+                                <div class="factor-icon">✔</div>
+                                <div>
+                                    <strong>Credit History:</strong> Meets guidelines (healthy repayment track record).
+                                </div>
+                            </div>
+                            <div class="factor-item positive">
+                                <div class="factor-icon">✔</div>
+                                <div>
+                                    <strong>Debt-to-Income:</strong> Estimated EMI is within prime range (4.3%).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Model Benchmarks & Comparison -->
+    <div class="modal-backdrop" id="modal-benchmarks">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Model Performance & Benchmarks</h2>
+                    <p class="modal-subtitle">Comparison of Scikit-Learn Classical Algorithms and TensorFlow Linear Model</p>
+                </div>
+                <button class="modal-close" id="btn-close-modal" aria-label="Close modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Model Name</th>
+                                <th>Framework</th>
+                                <th>Accuracy</th>
+                                <th>F1-Score</th>
+                                <th>ROC-AUC</th>
+                                <th>5-Fold CV</th>
+                            </tr>
+                        </thead>
+                        <tbody id="benchmark-tbody">
+                            <tr>
+                                <td><strong>Stacking Ensemble</strong> ⭐</td>
+                                <td>Scikit-Learn</td>
+                                <td>86.99%</td>
+                                <td>0.9130</td>
+                                <td>0.8802</td>
+                                <td>78.82%</td>
+                            </tr>
+                            <tr>
+                                <td>Random Forest</td>
+                                <td>Scikit-Learn</td>
+                                <td>86.99%</td>
+                                <td>0.9121</td>
+                                <td>0.8706</td>
+                                <td>78.82%</td>
+                            </tr>
+                            <tr>
+                                <td>Logistic Regression</td>
+                                <td>Scikit-Learn</td>
+                                <td>86.18%</td>
+                                <td>0.9081</td>
+                                <td>0.8768</td>
+                                <td>79.02%</td>
+                            </tr>
+                            <tr>
+                                <td>TensorFlow Linear Classifier</td>
+                                <td>TensorFlow (Single-Layer)</td>
+                                <td>86.18%</td>
+                                <td>0.9081</td>
+                                <td>0.8554</td>
+                                <td>86.18%</td>
+                            </tr>
+                            <tr>
+                                <td>Support Vector Machine</td>
+                                <td>Scikit-Learn</td>
+                                <td>84.55%</td>
+                                <td>0.8984</td>
+                                <td>0.8251</td>
+                                <td>79.84%</td>
+                            </tr>
+                            <tr>
+                                <td>Gradient Boosting</td>
+                                <td>Scikit-Learn</td>
+                                <td>84.55%</td>
+                                <td>0.8950</td>
+                                <td>0.8554</td>
+                                <td>77.80%</td>
+                            </tr>
+                            <tr>
+                                <td>Decision Tree</td>
+                                <td>Scikit-Learn</td>
+                                <td>79.67%</td>
+                                <td>0.8634</td>
+                                <td>0.8186</td>
+                                <td>78.00%</td>
+                            </tr>
+                            <tr>
+                                <td>K-Nearest Neighbors</td>
+                                <td>Scikit-Learn</td>
+                                <td>76.42%</td>
+                                <td>0.8466</td>
+                                <td>0.7983</td>
+                                <td>72.92%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="benchmark-note">
+                    <strong>Note:</strong> All models evaluated on an identical stratified 20% holdout test set with standard imputation and scaling. As instructed, zero deep learning architectures were utilized.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

@@ -1,12 +1,11 @@
-pandas
-scikit-learn==1.2.2
-numpy
-tensorflow
-imblearn
-matplotlib
-polars
-seaborn
-shiny
-imblearn
-rsconnect-python
-uvicorn
+# Core Data & Classical Machine Learning Libraries
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.2.0
+
+# Lightweight Linear Modeling (strictly single-layer linear model, no deep learning)
+tensorflow>=2.15.0
+
+# Persistence & Serving
+joblib>=1.2.0
+Flask>=3.0.0

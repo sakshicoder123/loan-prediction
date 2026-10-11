@@ -1,182 +1,179 @@
-# >>>>>>>>>>>>>>>>> Importing the packeges & setting the constants <<<<<<<<<<<<<<
-# import keras
-import joblib
-import sklearn
+"""
+Loan Prediction Web Application & REST API.
+Built with Flask, Scikit-Learn, NumPy, Pandas, and TensorFlow.
+"""
 
-import polars as pl
-import pandas as pd
-import numpy as np
-from shiny import App, ui, render
+import os
+import sys
+import json
+from flask import Flask, render_template, request, jsonify
 
-COLORS  = ['#102542', '#F87060', '#CDD7D6', '#B3A394', '#FFFFFF']
-COLUMNS = ['Gender', 'Married', 'Education',
-           'Property_Area', 'Monthly_Income',
-           'Extra_Monthly_Income', 'Loan_Term',
-           'Credit_History', 'Loan_Status',
-           'Dependents', 'Employment_Type',
-           'Loan_Amount', 'Total_Monthly_Income']
+# Add project root to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from src.predict import LoanPredictor
 
-df = pd.read_csv('data-cleaning/cleaned-data/processsed-data.csv')
-# ===============================================================================
-
-
-# >>>>>>>>>>>>>>>>>>>> Loading the models & data preparing <<<<<<<<<<<<<<<<<<<<<<
-scaler               = joblib.load('models/scaler.joblib')
-encoder              = joblib.load('models/encoder.joblib')
-lr_dt_model          = joblib.load('models/lr_dt.joblib')
-# nn_model             = keras.models.load_model('models/nn-model.h5')
-
-def preprocess_input(arr: np.array):
-    
-    '''This function prepare the data so the model can take 
-    an input and give us the predicted value.'''
-    
-    df = pd.DataFrame([arr.tolist()], columns= COLUMNS)
-    
-    df = df.astype({'Loan_Status'   : 'category', 'Credit_History'  : 'category',
-                    'Property_Area' : 'category', 'Employment_Type' : 'category',
-                    'Married'       : 'category', 'Education'       : 'category',
-                    'Gender'        : 'category', 'Monthly_Income'  : np.uint16,
-                    'Loan_Amount'   : np.uint16,  'Loan_Term'       : np.uint16,
-                    'Dependents'    : np.uint16, 
-                    'Total_Monthly_Income' : np.uint16,
-                    'Extra_Monthly_Income' : np.uint16})
-
-
-    continuous_cols = df.select_dtypes(include=np.number).columns
-    continuous_data = df[continuous_cols]
-    continuous_data[continuous_cols] = scaler.transform(continuous_data)
-
-    categorical_cols = df.select_dtypes('category').columns.drop(['Loan_Status'])
-    categorical_data = encoder.transform(df[categorical_cols])
-    categorical_cols = encoder.get_feature_names_out(categorical_cols)
-    categorical_data = pd.DataFrame(categorical_data,
-                                       columns=[col for col in categorical_cols])
-
-    processsed_arr   = pd.concat([continuous_data, categorical_data], axis= 1)
-
-    return processsed_arr
-# ==============================================================================
-
-
-# >>>>>>>>>>>>>>>>>>>>>>>>> Shiny app Inputs & Styling <<<<<<<<<<<<<<<<<<<<<<<<<
-with open('app/style.css', 'r') as file:
-    css_code = file.read()
-
-app_ui = ui.page_fluid(
-    ui.tags.style(css_code),
-    
-    ui.panel_title(title= '', window_title= 'Loan prediction ML app'),
-    
-    ui.div({'class': 'container'},
-
-        ui.h1('Loan Acceptance Prediction ML App'),
-        ui.p('*Don\'t use thie ML app in real world it was trained on mock data.'),
-           
-        ui.h5({'class': 'header'}, 'Numrical Inputs'),
-        ui.div({'class': 'horizontal-container'},
-            
-            ui.div(
-                {'class': 'card'},
-                ui.input_slider('term', 'How long is your Loan term in days?',
-                min=30, max=500, value=200, post= ' Days')),
-
-            ui.div(
-                {'class': 'card'},
-                ui.input_slider('amount', 'What\'s your requested loan amount?:',
-                min=5, max=100, value=40, post= 'K')),
-                
-            ui.div(
-                {'class': 'card'},
-                ui.input_numeric('extra_income', 'What\'s your extra monthly income if you have?:',
-                min=0, max=1_000_000, value=1000)),
-                
-            ui.div(
-                {'class': 'card'},
-                ui.input_numeric('income', 'How much money do you get per month?:',
-                min= 500, max= 1_000_000, value= 2000)),
-                
-            ui.div(
-                {'class': 'card'},
-                ui.input_slider('history', 'What\'s your credit history?:',
-                min=300, max=850, value=670))
-        ),
-
-        ui.h5({'class': 'header'}, 'Categorical Inputs'),
-        ui.div({'class': 'horizontal-container'},
-        
-            ui.div({'class': 'card'},
-                ui.input_select('area', 'Choose your desired property area',
-                ['Urban', 'Semiurban', 'Rural'])),
-            
-            ui.div({'class': 'card'},
-                ui.input_select('sex', 'What\'s your Gender?',
-                ['Female', 'Male'])),
-                
-            ui.div({'class': 'card'},
-                ui.input_select('self_employed', 'Are you self employed?',
-                ['Yes', 'No'])),
-                
-            ui.div({'class': 'card'},
-                ui.input_select('married', 'Are you married?',
-                ['Yes', 'No'])),
-                
-            ui.div({'class': 'card'},
-                ui.input_select('education', 'Did you graduate from colleuge?', 
-                ['Graduate', 'Not Graduate'])),
-                
-            ui.div({'class': 'card'},
-                ui.input_select('dependents', 'How many dependents do you have?', 
-                ['0', '1', '2', '3+']))
-            ),
-            
-        ui.h5({'class': 'header'}, 'The Loan Will Be:'),
-        ui.div({'class': 'output-container'},
-          ui.output_text("predict_loan_status"))
-    )
+app = Flask(
+    __name__,
+    template_folder=os.path.join(os.path.dirname(__file__), "templates"),
+    static_folder=os.path.join(os.path.dirname(__file__), "static")
 )
 
-def server(input, output, session):
+# Initialize predictor singleton
+predictor = LoanPredictor(models_dir=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "models")))
 
-    @output
-    @render.text
-    def predict_loan_status():
-      
-        gender               = input.sex()
-        married              = input.married()
-        education            = input.education()
-        property_area        = input.area()
-        monthly_income       = input.income()
-        extra_monthly_income = input.extra_income()
-        loan_term            = input.term()
-        credit_history       = input.history()
-        credit_history       = 'Bad' if credit_history < 670 else 'Good'
-        loan_Status          = 'Rejected' # Just a temp value
-        dependents           = input.dependents()
-        dependents           = 3 if dependents == '3+' else int(dependents)
-        self_employed        = input.self_employed()
-        self_employed        = 'Self-Employed' if self_employed == 'Yes' else 'Not-Self-Employed'
-        loan_amount          = input.amount() * 1000
-        total_income         = extra_monthly_income + monthly_income
+# Load cached metrics
+METRICS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "models", "metrics.json"))
 
 
-        unprocessed_arr      = np.array([gender,        married,
-                                        education,      property_area,
-                                        monthly_income, extra_monthly_income,
-                                        loan_term,      credit_history,
-                                        loan_Status,    dependents,
-                                        self_employed,  loan_amount,
-                                        total_income])
-
-        processed_arr        = preprocess_input(unprocessed_arr)
-        loan_status          = 'Accepted' if lr_dt_model.predict(processed_arr)[0] else 'Rejected'
-        
-        if total_income < 500:
-            loan_status = 'Please don\'t input total income less than 500$'
-
-        return loan_status
+def load_metrics():
+    if os.path.exists(METRICS_PATH):
+        try:
+            with open(METRICS_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
 
 
-app = App(app_ui, server)
-# ==============================================================================
+@app.route("/")
+def index():
+    metrics_data = load_metrics()
+    best_model_name = metrics_data.get("best_model_name", "Stacking Ensemble")
+    return render_template(
+        "index.html",
+        best_model=best_model_name,
+        models_count=len(metrics_data.get("models_benchmarked", {}))
+    )
+
+
+@app.route("/api/predict", methods=["POST"])
+def api_predict():
+    try:
+        data = request.get_json(force=True)
+        if not data:
+            return jsonify({"status": "error", "message": "No input payload provided."}), 400
+
+        applicant_data = {
+            "Gender": data.get("gender", "Male"),
+            "Married": data.get("married", "Yes"),
+            "Dependents": str(data.get("dependents", "0")),
+            "Education": data.get("education", "Graduate"),
+            "Self_Employed": data.get("self_employed", "No"),
+            "ApplicantIncome": float(data.get("applicant_income", 4500)),
+            "CoapplicantIncome": float(data.get("coapplicant_income", 1500)),
+            "LoanAmount": float(data.get("loan_amount", 120)),  # in K
+            "Loan_Amount_Term": float(data.get("loan_term", 360)),
+            "Credit_History": float(data.get("credit_history", 1)),
+            "Property_Area": data.get("property_area", "Semiurban")
+        }
+
+        engine = data.get("engine", "best")  # 'best' (sklearn) or 'tensorflow'
+        result = predictor.predict(applicant_data, engine=engine)
+
+        return jsonify({
+            "status": "success",
+            "data": result
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+
+@app.route("/api/metrics", methods=["GET"])
+def api_metrics():
+    metrics_data = load_metrics()
+    return jsonify({
+        "status": "success",
+        "data": metrics_data
+    })
+
+
+@app.route("/api/samples", methods=["GET"])
+def api_samples():
+    samples = [
+        {
+            "id": "prime",
+            "title": "Prime Applicant (Low Risk)",
+            "description": "High income, co-applicant support, stellar credit history.",
+            "data": {
+                "gender": "Male",
+                "married": "Yes",
+                "dependents": "1",
+                "education": "Graduate",
+                "self_employed": "No",
+                "applicant_income": 6500,
+                "coapplicant_income": 2500,
+                "loan_amount": 140,
+                "loan_term": 360,
+                "credit_history": 1,
+                "property_area": "Semiurban"
+            }
+        },
+        {
+            "id": "starter",
+            "title": "First-Time Buyer (Moderate Risk)",
+            "description": "Moderate earnings, good credit, standard starter loan.",
+            "data": {
+                "gender": "Female",
+                "married": "No",
+                "dependents": "0",
+                "education": "Graduate",
+                "self_employed": "No",
+                "applicant_income": 4200,
+                "coapplicant_income": 0,
+                "loan_amount": 110,
+                "loan_term": 360,
+                "credit_history": 1,
+                "property_area": "Urban"
+            }
+        },
+        {
+            "id": "overleveraged",
+            "title": "High Debt Burden (High Risk)",
+            "description": "Low income requesting a heavy loan with no coapplicant.",
+            "data": {
+                "gender": "Male",
+                "married": "Yes",
+                "dependents": "3+",
+                "education": "Not Graduate",
+                "self_employed": "Yes",
+                "applicant_income": 2200,
+                "coapplicant_income": 0,
+                "loan_amount": 250,
+                "loan_term": 180,
+                "credit_history": 1,
+                "property_area": "Rural"
+            }
+        },
+        {
+            "id": "adverse_credit",
+            "title": "Adverse Credit History (Rejected)",
+            "description": "Decent income but non-compliant past credit track record.",
+            "data": {
+                "gender": "Male",
+                "married": "No",
+                "dependents": "0",
+                "education": "Graduate",
+                "self_employed": "No",
+                "applicant_income": 5800,
+                "coapplicant_income": 1200,
+                "loan_amount": 130,
+                "loan_term": 360,
+                "credit_history": 0,
+                "property_area": "Urban"
+            }
+        }
+    ]
+    return jsonify({
+        "status": "success",
+        "samples": samples
+    })
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting Loan Prediction Web Server on http://127.0.0.1:{port}")
+    app.run(host="0.0.0.0", port=port, debug=False)
